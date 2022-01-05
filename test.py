@@ -4,11 +4,12 @@ import random
 
 class Board:
     def __init__(self, board_array):
+        # 後々使いそうな変数はself.の形にして保存しておく
         self.array = board_array
         self.height_list = self.make_height_list()
         self.box_list = self.make_box_list()
 
-    # 縦区切りの全体リスト(height_list)を作成する
+    # 縦区切りの全体リスト(height_list)を作成する。return: [ [要素*9], ... *9]
     def make_height_list(self):
         height_list = []
         for a in range(9):
@@ -22,16 +23,22 @@ class Board:
     def make_box_list(self):
         block_list = []
         temp = []
+        # 3*3ボックスの中心の座標は(1,1), (1,4), (1,7), (4,1), ... , (7,7)
         for center_x_y in itertools.product([1,4,7],[1,4,7]):
             temp = []
+            """
+            中心の座標から(-1,-1), (-1,0), (-1,1), (0,-1), ... , (1,1)だけ
+            移動した９つの場所（3*3ボックス）を配列にappendする。これを中心の座標の数(9)だけ繰り返す。
+            """
             for dx_dy in itertools.product([-1,0,1],[-1,0,1]):
                 temp.append(self.array[center_x_y[0] + dx_dy[0]][center_x_y[1] + dx_dy[1]])
             block_list.append(temp)
         return block_list
 
 
-    def boxlist_sum(self):
-        return 9
+    def printArray(self):
+        for i in self.array:
+            print(i)
 
 final_Board = [
     [0, 4, 0, 6, 0, 7, 0, 1, 0],
@@ -43,13 +50,6 @@ final_Board = [
     [0, 5, 0, 9, 0, 3, 0, 8, 0],
     [0, 1, 0, 8, 0, 4, 0, 6, 0],
     [4, 0, 8, 0, 1, 0, 7, 0, 3]]
-
-board = Board(final_Board)
-print(board.array)
-print(board.box_list)
-print(board.height_list)
-print(board.boxlist_sum())
-
 
 Board_Overall = []
 # 初期の盤面の状況を入力して保存する
@@ -95,15 +95,7 @@ def box_list(information):
             combine.append(box_list)
     return combine
 
-def _box_list(array):
-    temp = []
-    for center_x_y in itertools.product([1,4,7],[1,4,7]):
-        temp = []
-        for dx_dy in itertools.product([-1,0,1],[-1,0,1]):
-            temp.append(array[center_x_y[0] + dx_dy[0]][center_x_y[1] + dx_dy[1]])
-        print(temp)
 
-_box_list(final_Board)
 # 横の判定をする
 def judge_width(information):
     final = []
@@ -112,9 +104,8 @@ def judge_width(information):
         for i in range(9):
             if not h+1 in information[i]:
                 x = [i]
-                
                 y = [a for a, b in enumerate(information[i]) if b == 0]
-                #　(縦,横)で情報をまとめる
+                # (縦,横)で情報をまとめる
                 v = list(itertools.product(x,y))
             else:
                 v = []
@@ -221,3 +212,20 @@ def main():
     assign(set_all,final_Board)
 
 # main()
+
+def main2():
+    """
+    Boardクラス
+
+    変数:
+    .array: 盤面の配列情報
+    .height_list: 縦区切りの盤面の配列情報
+    .box_list: 3*3ボックス区切りの盤面の配列情報
+
+    メソッド:
+    .printArray(): 現在の盤面の配列情報を出力する。
+    """
+    board = Board(final_Board)
+    board.printArray()
+
+main2()
