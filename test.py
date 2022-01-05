@@ -1,16 +1,58 @@
 import itertools
-Finaly_Board = [
+import random
+
+
+class Board:
+    def __init__(self, board_array):
+        self.array = board_array
+        self.height_list = self.make_height_list()
+        self.box_list = self.make_box_list()
+
+    # 縦区切りの全体リスト(height_list)を作成する
+    def make_height_list(self):
+        height_list = []
+        for a in range(9):
+            temp = []
+            for b in range(9):
+                temp.append(self.array[b][a])
+            height_list.append(temp)
+        return height_list
+
+    # 3*3ブロック区切りのリストを作成する。return: [ [要素*9], ... *9]
+    def make_box_list(self):
+        block_list = []
+        temp = []
+        for center_x_y in itertools.product([1,4,7],[1,4,7]):
+            temp = []
+            for dx_dy in itertools.product([-1,0,1],[-1,0,1]):
+                temp.append(self.array[center_x_y[0] + dx_dy[0]][center_x_y[1] + dx_dy[1]])
+            block_list.append(temp)
+        return block_list
+
+
+    def boxlist_sum(self):
+        return 9
+
+final_Board = [
     [0, 4, 0, 6, 0, 7, 0, 1, 0],
-    [1, 0, 5, 0, 4, 0, 9, 0, 6], 
+    [1, 0, 5, 0, 4, 0, 9, 0, 6],
     [6, 0, 7, 0, 3, 0, 5, 0, 2],
-    [0, 9, 0, 7, 0, 2, 0, 3, 0], 
-    [8, 0, 1, 0, 6, 0, 4, 0, 9], 
+    [0, 9, 0, 7, 0, 2, 0, 3, 0],
+    [8, 0, 1, 0, 6, 0, 4, 0, 9],
     [3, 0, 2, 0, 9, 0, 8, 0, 7],
     [0, 5, 0, 9, 0, 3, 0, 8, 0],
     [0, 1, 0, 8, 0, 4, 0, 6, 0],
     [4, 0, 8, 0, 1, 0, 7, 0, 3]]
+
+board = Board(final_Board)
+print(board.array)
+print(board.box_list)
+print(board.height_list)
+print(board.boxlist_sum())
+
+
 Board_Overall = []
-# 初期の盤面の状況を読み込む
+# 初期の盤面の状況を入力して保存する
 def load(message):
     initial_condition = input(message)
     # inputされた値が九桁の数字である（int型に置き換えられる）ことを確かめる
@@ -23,13 +65,14 @@ def load(message):
     else:
         return 0
 
-#　入力された横列ごとの情報を一つのリストにまとめる
+# 入力された横列ごとの情報を一つのリストにまとめる
 def combine(information):
     all_condition = [int(x) for x in list(str(information))]
     Board_Overall.append(all_condition)
     return Board_Overall
 
-#　縦区切りの全体リスト(combine)を作成する
+
+# 縦区切りの全体リスト(combine)を作成する
 def height_list(information):
     combine = []
     for a in range(9):
@@ -39,7 +82,7 @@ def height_list(information):
         combine.append(height_list)
     return combine
 
-#　3*3　のリストを作成する
+# 3*3 のリストを作成する
 def box_list(information):
     combine = []
     count =[[0,1,2],[3,4,5],[6,7,8]]
@@ -52,9 +95,18 @@ def box_list(information):
             combine.append(box_list)
     return combine
 
-#　横の判定をする
+def _box_list(array):
+    temp = []
+    for center_x_y in itertools.product([1,4,7],[1,4,7]):
+        temp = []
+        for dx_dy in itertools.product([-1,0,1],[-1,0,1]):
+            temp.append(array[center_x_y[0] + dx_dy[0]][center_x_y[1] + dx_dy[1]])
+        print(temp)
+
+_box_list(final_Board)
+# 横の判定をする
 def judge_width(information):
-    finaly = []
+    final = []
     for h in range(9):
         line = []
         for i in range(9):
@@ -67,12 +119,12 @@ def judge_width(information):
             else:
                 v = []
             line.append(v)
-        finaly.append(line)
-    return finaly
+        final.append(line)
+    return final
 
 # 縦の判定をする（横の判定とまとめたい）
 def judge_height(information):
-    finaly = []
+    final = []
     for h in range(9):
         line = []
         for i in range(9):
@@ -85,12 +137,12 @@ def judge_height(information):
             else:
                 v = []
             line.append(v)
-        finaly.append(line)
-    return finaly
+        final.append(line)
+    return final
 
 # 3*3の判定をする
 def judge_box(information):
-    finaly = []
+    final = []
     for h in range(9):
         box = []
         for i in range(9):
@@ -112,10 +164,10 @@ def judge_box(information):
             else:
                 v = [tuple([])]
             box.append(v)
-        finaly.append(box)
-    return finaly
+        final.append(box)
+    return final
 
-#　できればこの中身をまとめたい
+# できればこの中身をまとめたい
 def set_able(x,y,z):
     set_all = []
     for h in range(9):
@@ -151,22 +203,21 @@ def assign(x,y):
         print("________")
 
 
-
 def main():
     # for i in range(9):
     #     condition = load(str(i+1) + "行目の盤面の状況を入力してください")
     #     while condition == 0:
     #         condition = load("入力にミスがあります。再入力してください")
-    #     Finaly_Board = combine(condition)
-    # print(Finaly_Board)
-    list_of_height = height_list(Finaly_Board)
-    list_of_boxes = box_list(Finaly_Board)
+    #     final_Board = combine(condition)
+    # print(final_Board)
+    list_of_height = height_list(final_Board)
+    list_of_boxes = box_list(final_Board)
     for a in range(9):
-        print (Finaly_Board[a])
-    able_width = judge_width(Finaly_Board)
+        print (final_Board[a])
+    able_width = judge_width(final_Board)
     able_height = judge_height(list_of_height)
     able_boxes = judge_box(list_of_boxes)
     set_all = set_able(able_width,able_height,able_boxes)
-    assign(set_all,Finaly_Board)
+    assign(set_all,final_Board)
 
-main()
+# main()
