@@ -35,10 +35,13 @@ class Board:
             block_list.append(temp)
         return block_list
 
-
     def printArray(self):
         for i in self.array:
             print(i)
+
+
+
+
 
 final_Board = [
     [0, 4, 0, 6, 0, 7, 0, 1, 0],
@@ -70,7 +73,6 @@ def combine(information):
     all_condition = [int(x) for x in list(str(information))]
     Board_Overall.append(all_condition)
     return Board_Overall
-
 
 # 縦区切りの全体リスト(combine)を作成する
 def height_list(information):
@@ -150,7 +152,7 @@ def judge_box(information):
                     y = [3,4,5]
                 else:
                     y = [6,7,8]
-                #　(縦,横)で情報をまとめる
+                # (縦,横)で情報をまとめる
                 v = list(itertools.product(x,y))
             else:
                 v = [tuple([])]
