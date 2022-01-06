@@ -226,6 +226,7 @@ def main2():
 
     メソッド:
     .printArray(): 現在の盤面の配列情報を出力する。
+
     """
     board = Board(final_Board)
     board.printArray()
